@@ -11,7 +11,8 @@ function Show-Menu {
     $json = Get-Content $ConfigFile -Raw | ConvertFrom-Json
     Clear-Host
     Write-Host "==========================================" -ForegroundColor Cyan
-    Write-Host "      浏览器代理一键切换工具 (PowerShell)" -ForegroundColor Cyan
+    Write-Host "      浏览器代理一键切换工具 (v1.0.0)" -ForegroundColor Cyan
+    Write-Host "      作者: lintg@sina.com  版权所有 2026" -ForegroundColor Cyan
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "当前配置列表:"

@@ -19,5 +19,8 @@
       "name": "vpn"
     }
   ],
-  "default_bypass": "localhost;127.*;<local>"
+  "default_bypass": "localhost;127.*;<local>",
+  "version": "1.0.0",
+  "author": "lintg@sina.com",
+  "copyright": "© 2026 lintg"
 }
