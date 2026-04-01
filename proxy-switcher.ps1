@@ -8,7 +8,7 @@ function Show-Menu {
         @{ proxies = @() } | ConvertTo-Json | Out-File $ConfigFile -Encoding utf8
     }
     
-    $json = Get-Content $ConfigFile -Raw | ConvertFrom-Json
+    $json = Get-Content $ConfigFile -Raw -Encoding utf8 | ConvertFrom-Json
     Clear-Host
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host "      浏览器代理一键切换工具 (v1.0.0)" -ForegroundColor Cyan
@@ -42,7 +42,7 @@ while ($true) {
         continue
     }
     
-    $json = Get-Content $ConfigFile -Raw | ConvertFrom-Json
+    $json = Get-Content $ConfigFile -Raw -Encoding utf8 | ConvertFrom-Json
     
     if ($choice -eq 's') {
         $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
@@ -53,16 +53,20 @@ while ($true) {
         $name = Read-Host "输入新配置的名称"
         if (-not $name) { $name = "未命名配置_$(Get-Date -Format 'HHmm')" }
         
+        $newServer = if ($currentServer) { $currentServer.ProxyServer } else { "" }
+        $newEnable = if ($currentEnable -and $currentEnable.ProxyEnable -eq 1) { $true } else { $false }
+        $newBypass = if ($currentBypass) { $currentBypass.ProxyOverride } else { "" }
+        
         $newProxy = @{
             name   = $name
-            server = if ($currentServer) { $currentServer.ProxyServer } else { "" }
-            enable = if ($currentEnable.ProxyEnable -eq 1) { $true } else { $false }
-            bypass = if ($currentBypass) { $currentBypass.ProxyOverride } else { "" }
+            server = $newServer
+            enable = $newEnable
+            bypass = $newBypass
         }
         
         $json.proxies += $newProxy
         $json | ConvertTo-Json -Depth 10 | Out-File $ConfigFile -Encoding utf8
-        Write-Host "`n已成功保存当前配置！" -ForegroundColor Green
+        Write-Host "`n已成功保存当前配置！ " -ForegroundColor Green
         Start-Sleep -Seconds 1
         continue
     }
@@ -85,7 +89,7 @@ while ($true) {
             $bypassValue = if ($p.bypass) { $p.bypass } else { $json.default_bypass }
             Set-ItemProperty -Path $regPath -Name "ProxyOverride" -Value $bypassValue
             
-            Write-Host "`n已成功切换到: $($p.name)" -ForegroundColor Green
+            Write-Host "`n已成功切换到: $($p.name) " -ForegroundColor Green
             
             # 刷新系统设置以立即生效
             try {
@@ -94,14 +98,14 @@ while ($true) {
                 $wininet::InternetSetOption([IntPtr]::Zero, 39, [IntPtr]::Zero, 0)
                 $wininet::InternetSetOption([IntPtr]::Zero, 37, [IntPtr]::Zero, 0)
             } catch {
-                Write-Host "提示：刷新系统设置失败，可能需要手动刷新浏览器。" -ForegroundColor Gray
+                Write-Host "提示：刷新系统设置失败，可能需要手动刷新浏览器。 " -ForegroundColor Gray
             }
             
         } else {
-            Write-Host "`n无效选择！" -ForegroundColor Red
+            Write-Host "`n无效选择！ " -ForegroundColor Red
         }
     } else {
-        Write-Host "`n请输入有效的数字或操作符。" -ForegroundColor Red
+        Write-Host "`n请输入有效的数字或操作符。 " -ForegroundColor Red
     }
     
     Write-Host ""
