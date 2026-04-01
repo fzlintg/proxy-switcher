@@ -1,4 +1,4 @@
-# 强制控制台输出为 UTF8
+﻿# 强制控制台输出为 UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ConfigFile = "config.json"
